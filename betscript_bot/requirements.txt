@@ -1,0 +1,10 @@
+# BetScript Bot — Python Dependencies
+# All stdlib only — no external packages required for core bot.
+# Optional: PyPokerEngine for local testing environment.
+
+# Core: no dependencies (stdlib only)
+# python >= 3.9
+
+# Optional testing environment:
+# pypokerengine==0.0.9    # For running local simulations with the full engine
+# numpy                   # If adding numpy-accelerated Monte Carlo (optional speedup)
