@@ -19,6 +19,7 @@ from numerapi import NumerAPI
 
 # --- GLOBAL GUARDRAILS (RCA-DRIVEN) ---
 MODEL_NAME = "anant0"
+MODEL_ID = "5fe67e13-8dae-4693-8294-84ddd8e8db80" # Robust UUID for anant0
 CHAMPION_METRICS_PATH = "champion_metrics.json"
 VAL_SCORE_FLOOR = 0.005  # Guardrail B: Reject models with correlation below 0.5%
 MAX_TRIALS = 25          # Guardrail C: Limit search space to save GH Actions minutes
@@ -73,7 +74,8 @@ def run_upgrade():
     secret_key = os.getenv("NUMERAI_SECRET_KEY")
     
     if not public_id or not secret_key:
-        logger.error("[GUARDRAIL] Missing credentials. Mission abort.")
+        logger.error(f"[GUARDRAIL] Missing credentials. Public ID present: {bool(public_id)}, Secret Key present: {bool(secret_key)}. Mission abort.")
+        # Rule-046 compliance: Ensure failures are clear in logs.
         sys.exit(1)
         
     napi = NumerAPI(public_id, secret_key)
@@ -110,10 +112,10 @@ def run_upgrade():
             cloudpickle.dump(model, f)
             
         # 5. Deployment Gate
-        logger.info(f"Uploading to Numerai...")
-        model_id = napi.get_models().get(MODEL_NAME)
-        if model_id:
-            napi.model_upload(model_path, model_id=model_id)
+        logger.info(f"Uploading to Numerai (Model: {MODEL_NAME}, ID: {MODEL_ID})...")
+        try:
+            napi.model_upload(model_path, model_id=MODEL_ID)
+            logger.info("[SUCCESS] Model Uploaded!")
             
             with open(CHAMPION_METRICS_PATH, "w") as f:
                 json.dump({
@@ -123,8 +125,8 @@ def run_upgrade():
                     "version": "2.0.0-guardrail"
                 }, f, indent=2)
             logger.info("Deployment successful. Champion updated.")
-        else:
-            logger.error(f"Model {MODEL_NAME} not found.")
+        except Exception as e:
+            logger.error(f"Upload failed: {e}")
     else:
         reason = "Score too low" if not is_better else ("Stability veto" if not is_stable else "Below floor")
         logger.info(f"Evolution skipped: {reason}. Remaining in standby.")

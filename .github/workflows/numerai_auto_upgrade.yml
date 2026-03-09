@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install pandas xgboost optuna numerapi cloudpickle
+          pip install pandas xgboost optuna numerapi cloudpickle scipy scikit-learn
 
       - name: Run Auto-Upgrade
         env:
