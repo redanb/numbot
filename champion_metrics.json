@@ -1,13 +1,13 @@
 {
-  "best_score": 0.034693303945207414,
+  "best_score": 0.03481980542482444,
   "params": {
-    "n_estimators": 1950,
-    "max_depth": 8,
-    "learning_rate": 0.12459856499066346,
-    "subsample": 0.6597176934978709,
-    "colsample_bytree": 0.7078699577321333,
-    "gamma": 4.425902812718432
+    "n_estimators": 1129,
+    "max_depth": 11,
+    "learning_rate": 0.02474154649471658,
+    "subsample": 0.5042398443035976,
+    "colsample_bytree": 0.7203580775782294,
+    "gamma": 7.586041780776247
   },
-  "timestamp": "2026-03-10T01:46:52.998771",
+  "timestamp": "2026-03-11T06:48:58.906800",
   "version": "2.0.0-guardrail"
 }
