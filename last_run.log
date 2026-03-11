@@ -1,0 +1,803 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-03-04T14:05:17.130914",
+  "description": "Global persistent memory for Antigravity agent. Read at session start. Append-only via Reflect() protocol. NEVER delete entries.",
+  "permanent_rules": [
+    {
+      "id": "RULE-001",
+      "date_learned": "2026-02-20",
+      "source_task": "Case B Med-Legal Doc Generation",
+      "error": "Renamed files with wrong convention before verifying existing file list",
+      "rule": "ALWAYS run find_by_name before any batch rename or file operation",
+      "category": "file_operations",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Ran find_by_name \u2192 identified naming conflicts \u2192 renamed in correct sequential order"
+    },
+    {
+      "id": "RULE-002",
+      "date_learned": "2026-02-20",
+      "source_task": "Global System Init",
+      "error": "N/A \u2014 baseline rule",
+      "rule": "ALWAYS read this file (learning_state.json) at the start of every session. Summarize last 3 PREVENT_REPEAT entries before first action.",
+      "category": "session_protocol",
+      "PREVENT_REPEAT": true,
+      "correction_path": "N/A \u2014 initialization rule"
+    },
+    {
+      "id": "RULE-003",
+      "date_learned": "2026-02-21",
+      "source_task": "Chat & Context Persistence Implementation",
+      "error": "Potential loss of session context after manual IDE re-installation",
+      "rule": "ALWAYS update RESUME_CONTEXT.md after milestones to ensure persistent state across IDE re-installs. READ this file on startup per Constitution Art 1.",
+      "category": "session_protocol",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Created RESUME_CONTEXT.md and automated its loading via Constitutional mandate Article 1 & 6."
+    },
+    {
+      "source_task": "Implement Super Agent Architecture",
+      "error": "UnicodeEncodeError on Windows console when printing emojis",
+      "rule": "ALWAYS wrap sys.stdout with utf-8 encoding when printing emojis in python CLI tools on Windows",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-004",
+      "date_learned": "2026-02-21"
+    },
+    {
+      "id": "RULE-007",
+      "date_learned": "2026-02-22",
+      "source_task": "Global AI Metadata Management Implementation",
+      "error": "N/A - Feature Introduction",
+      "rule": "ALL files ingested or processed by the AI MUST pass through ai_metadata_manager.py to receive a provenance and compliance block (the 'Employee Handbook'). Do not process raw user uploads without metadata stamping.",
+      "category": "compliance",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Implemented AIMetadataManager and integrated into vault_router.py."
+    },
+    {
+      "id": "RULE-008",
+      "date_learned": "2026-02-22",
+      "source_task": "SahiMed Content Risk Audit",
+      "error": "Fabricated Supreme Court directive and misleading claims in public content",
+      "rule": "ALL public-facing content MUST pass content_risk_scanner.py with zero CRITICAL findings before publishing. Never make unverifiable claims about court rulings, certifications, or user counts.",
+      "category": "content_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Built content_risk_scanner.py with 18 patterns across 6 risk categories. Removed 17 risky findings from SahiMed content files."
+    },
+    {
+      "id": "RULE-009",
+      "date_learned": "2026-02-22",
+      "source_task": "Global context safety implementation",
+      "error": "Hallucinated primary contact (Priya) as the Founder due to generic strategy doc terminology.",
+      "rule": "MANDATORY PERSONA CHECK: Agents MUST read ROLES.md before drafting any public-facing text, profiles, or communications to ensure correct grounding in team hierarchy and terminology.",
+      "category": "persona_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Created global ROLES.md and added FC-004/ML-005 patterns to content_risk_scanner.py."
+    },
+    {
+      "id": "RULE-010",
+      "date_learned": "2026-02-22",
+      "source_task": "System Crash RCA (cannot call write after a stream was destroyed)",
+      "error": "LSP/Server crashed due to Memory Exhaustion (OOM) or IPC payload limits exceeded when generating/viewing artifacts with many high-res images in a single rapid burst.",
+      "rule": "PAYLOAD MANAGMENT: When creating walkthroughs or artifacts containing multiple media files (images/videos), agents MUST NOT call `view_file` on them immediately after creation if they exceed 5 references. Use smaller, chunked updates to prevent IPC stream destruction.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Identified stream destruction root cause. Mandated chunked artifact generation and restricted heavy media viewing."
+    },
+    {
+      "id": "RULE-011",
+      "date_learned": "2026-02-23",
+      "source_task": "MIT CSAIL Safety Framework Audit",
+      "error": "Agents previously had authorization to silently overwrite configuration files, breaking Transparency requirements.",
+      "rule": "DIFF-ONLY CONFIG CHECK: Agents MUST NOT silently construct or execute write operations on core environment files, `.env`, or central schemas. You must first present a Git-style 'diff' to the user using the `notify_user` or artifact tools and await explicit approval.",
+      "category": "transparency_config",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized Diff-Only Protocol per MIT CSAIL Transparency pillar."
+    },
+    {
+      "id": "RULE-012",
+      "date_learned": "2026-02-23",
+      "source_task": "Guardian Override RCA \u2014 knoadvsys workspace override",
+      "error": "Agent overrode the Task Architect's WORKSPACE_NEW recommendation and built knoadvsys locally without requesting HITL approval. This is structurally identical to the Microsoft Copilot DLP bypass bug (Feb 2026) where AI bypassed explicit safety policies.",
+      "rule": "GUARDIAN OVERRIDE HARD-BLOCK: When ANY automated safety system (task_architect.py, content_risk_scanner.py, sahimed_guardrails.py, pii_firewall.py) outputs a blocking decision, the Agent MUST NOT override it silently. The Agent MUST halt, present the safety system's full output to the User via notify_user, and await explicit HITL approval text before proceeding. User intent does NOT automatically override safety gates \u2014 it must be re-confirmed AFTER the safety output is shown.",
+      "category": "critical_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Added HITL gate to task_architect.py that blocks execution and exits with code 2 when override is attempted without token. Logged as permanent rule."
+    },
+    {
+      "id": "RULE-013",
+      "date_learned": "2026-02-23",
+      "source_task": "Microsoft Copilot DLP Bypass Analysis (Feb 2026)",
+      "error": "Enterprise AI tools can inherit and amplify permission flaws in the stack. Microsoft Copilot read confidential emails marked with sensitivity labels by bypassing DLP policies through a code error in Sent/Drafts folder access.",
+      "rule": "PERMISSION INHERITANCE FIREWALL: Before ANY agent reads, processes, or summarizes content from external sources (email, cloud files, APIs), it MUST first check if the content carries sensitivity labels, access restrictions, or DLP markers. If ANY restriction is detected, the agent MUST halt and request explicit HITL approval. Agents MUST NOT assume they inherit the user's full permission scope \u2014 they operate under LEAST PRIVILEGE by default.",
+      "category": "critical_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized Least Privilege doctrine. Added permission inheritance checks to global rules."
+    },
+    {
+      "id": "RULE-014",
+      "date_learned": "2026-02-23",
+      "source_task": "SEO Entity Refactor and Regression Alignment",
+      "error": "The Free SEO Strategy required rendering primary and alternate brand entities in HTML. This triggered a legacy regression failure where verify_task.py explicitly banned the alternate entity.",
+      "rule": "REGRESSION ALIGNMENT: Proactively audit and update the regression test suite (verify_task.py) BEFORE running it when executing a strategic pivot, to ensure legacy assertions do not conflict.",
+      "category": "testing_strategy_alignment",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Patched verify_task.py to allow the required SEO entities."
+    },
+    {
+      "id": "RULE-015",
+      "date_learned": "2026-02-23",
+      "source_task": "Browser Subagent IDE Crash RCA",
+      "error": "The Antigravity IDE crashed ('Window is not responding') due to IPC payload exhaustion and OOM. The browser subagent processed massive continuous steps on heavy SPAs, overloading the Electron/Node IPC bridge with DOMs and Base64 images.",
+      "rule": "IPC OVERLOAD FIREWALL / HIGH-SPEED CHUNKING: Agents MUST implement a 'Multi-Pronged Approach' for browser automation to prevent crashes. 1. Segment subagent calls into discrete, single-site passes rather than continuous loops. 2. Mandate strict single-tab routing. 3. Ensure subagent disconnects to GC memory before initiating the next domain.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Implemented Task Chunking. Subdivided the social indexing task into distinct, isolated browser_subagent calls to flush IPC memory."
+    },
+    {
+      "id": "RULE-016",
+      "date_learned": "2026-02-23",
+      "source_task": "User Preference Update (Dev Tools Newsletter)",
+      "error": "N/A - Feature Introduction",
+      "rule": "DEFAULT BROWSER MANDATE: Always use Google Chrome as the global browser for all web interactions, subagent tasks, and system OS handoffs unless another browser is explicitly requested by the user.",
+      "category": "system_environment",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Hardcoded Google Chrome preference into global persistent memory."
+    },
+    {
+      "id": "RULE-017",
+      "date_learned": "2026-02-23",
+      "source_task": "Global Automation of Agentic Workflows",
+      "error": "N/A - System Upgrade",
+      "rule": "BACKGROUND AGENT AUTOMATION: Agents MUST NOT execute long-running (>2min) web scraping, file monitoring, or autonomous loops simultaneously within the active chat thread. ALWAYS use `agent_manager.py deploy <script> <name>` to launch these tasks as detached subprocesses. The global Architecture Router (`task_architect.py`) natively supports auto-deploying Agent class definitions.",
+      "category": "system_architecture",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized Terminal Use deployment strategy globally. Upgraded task_architect to auto-dispatch SPECIALIZED_AGENT classifications to the agent_manager."
+    },
+    {
+      "id": "RULE-018",
+      "date_learned": "2026-02-24",
+      "source_task": "Guardian Safety Clause for Agent Deployments",
+      "error": "Automating agent_manager.py unconditionally risked launching autonomous background processes that could execute irreversible or critical tasks (e.g., dropping databases, publishing to production) without HITL oversight.",
+      "rule": "AUTO-DEPLOYMENT SAFETY CLAUSE: NO automated agent router (like task_architect.py) may instantly deploy a detached background agent WITHOUT first passing the script through a heuristic risk scanner. If terms like 'delete', 'drop', 'deploy', 'credentials', or 'payment' are found, the auto-deploy MUST hard-block and demand an explicit HITL override token.",
+      "category": "critical_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Injected a content risk scanner directly into the task_architect's enforce_decision method, prioritizing safety over 100% automation of risky tasks."
+    },
+    {
+      "id": "RULE-019",
+      "date_learned": "2026-02-24",
+      "source_task": "Subagent Initialization OOM Crash RCA",
+      "error": "The Antigravity IDE crashed immediately upon deploying a browser subagent targeting the Google Sites editor. The heavy React/JS payload of Google Workspace editors overwhelmed the IPC bridge on initialization before any chunking could occur.",
+      "rule": "BROWSER DOM EXHAUSTION FIREWALL: The browser_subagent MUST NOT be outright banned if the user explicitly requests its use. Instead, to prevent OOM IDE crashes on ultra-heavy Single Page Applications (SPAs) like Google Sites/GSC: agents MUST instruct the subagent to explicitly close all other browser tabs first, aggressively batch its actions, and immediately disconnect upon task completion to trigger memory garbage collection.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Replaced the outright ban with a memory optimization mandate per the user's explicit override instruction."
+    },
+    {
+      "id": "RULE-020",
+      "date_learned": "2026-02-24",
+      "source_task": "Google Sites SEO Fact-Correction",
+      "error": "Hallucinated that Google Sites had an 'SEO' tab in the Settings gear and suggested injecting `<meta>` HTML tags and `<script>` schema markup into the site head. These are deprecated 'Classic Sites' features. New Google Sites explicitly blocks custom `<head>` injections and lacks an SEO tab.",
+      "rule": "NEW GOOGLE SITES SEO MANDATE: Agents MUST NOT suggest custom HTML tags or schema markup for Google Sites. The ONLY valid SEO vectors for New Google Sites are: 1. Page Properties (Name = Title Tag, Description = Meta Description). 2. Custom URL Paths (via Properties -> Advanced). 3. Image Alt Text (3-dots -> Alt text). 4. Navigation Labels (which act as title tags). Rely on GBP, LinkedIn, or Carrd for actual schema.",
+      "category": "platform_facts",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Globally updated platform knowledge for New Google Sites. Removed schema injection steps from the SahiMed implementation plan."
+    },
+    {
+      "id": "RULE-021",
+      "date_learned": "2026-02-24",
+      "source_task": "IDE OOM Crash RCA V3: V8 Engine Tuning",
+      "error": "The IDE suffered repeated 'Antigravity server crashed' errors. The underlying Node.js V8 JavaScript engine ran out of memory (heap exhaustion) when the browser_subagent attempted to stream massive DOM payloads from Google Workspace apps over the local IPC socket.",
+      "rule": "V8 HEAP EXPANSION: All agent subprocesses routing through `antigravity_shell.py` MUST be dynamically injected with `NODE_OPTIONS=--max-old-space-size=8192` to expand the AI server's V8 heap limit to 8GB. This is a mandatory OS-level mitigation to prevent catastrophic memory crashes when analyzing heavy browser workflows.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Hardcoded the NODE_OPTIONS memory expansion flag directly into the global execution interceptor (antigravity_shell.py)."
+    },
+    {
+      "id": "RULE-022",
+      "date_learned": "2026-02-24",
+      "source_task": "Global Fact-Checking Automation",
+      "error": "The system executed hallucinated SEO instructions without verifying them against current platform realities first.",
+      "rule": "PRE-EXECUTION FACT-CHECKING: Before generating implementation plans, executing browser operations on 3rd party platforms, or writing strategic scripts, agents MUST explicitly confirm their heuristic assumptions by either using `search_web` to verify current platform constraints (e.g., 'Google Sites custom meta tag 2026') or requesting manual user confirmation. Never rely purely on base weights for platform-specific capabilities.",
+      "category": "critical_safety",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized an explicit zero-trust fact-checking protocol prior to executing unverified system strategies."
+    },
+    {
+      "id": "RULE-023",
+      "date_learned": "2026-02-24",
+      "source_task": "DevSecOps Global Rollout",
+      "error": "antigravity_shell.py crashed parsing stdout of a test script because the output contained UTF-8 emojis, triggering a cp1252 charmap UnicodeDecodeError in subprocess._readerthread on Windows.",
+      "rule": "WINDOWS SHELL EMOJI EXCLUSION: Agents MUST NOT include any Unicode emojis or special characters inside print() statements or output buffers in Global Core Scripts (e.g. tools living in the master directory). On Windows, the antigravity_shell.py interceptor inherits the default cp1252 encoding and will fatally crash when attempting to decode emoji bytes injected by child processes.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Stripped all emoji Unicode literals from antigravity_sast.py and live_app_monitor.py, strictly utilizing [OK], [WARN], and [ERROR] text prefixes instead."
+    },
+    {
+      "id": "RULE-024",
+      "date_learned": "2026-02-24",
+      "source_task": "Hyperagent DevSecOps Orchestration",
+      "error": "User requested automatic triggering of DevSecOps code scanners without manual friction.",
+      "rule": "HYPERAGENT AUTOMATION: DevSecOps tools (SAST and Live Monitor) MUST be auto-triggered by the global shell interceptor (antigravity_shell.py) on state-altering and long-running execution commands (e.g., git commits, npm installs, python servers). Output logs from these tools MUST be written to centralized JSONL ledgers in the master node to provide Airtable-like structured context parsing for future agents.",
+      "category": "security_automation",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Embedded regex heuristics inside antigravity_shell.py to fork SAST and wrap Live App Monitor dynamically. Modified DevSecOps tools to append findings to JSONL ledgers."
+    },
+    {
+      "id": "RULE-025",
+      "date_learned": "2026-02-24",
+      "source_task": "Windows Native Bootstrap Fix",
+      "error": "bash command failed on Windows PowerShell because bash is not a native command.",
+      "rule": "WINDOWS NATIVE EXECUTION: On Windows systems, the antigravity_shell.py MUST intercept legacy bash calls and redirect them to their Python equivalents (e.g. bash init_antigravity.sh -> python init_antigravity.py). This ensures total execution stability regardless of the user shell environment.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Implemented a bash-to-python shim in antigravity_shell.py Layer 4 and migrated all Master worklfow templates to python native commands."
+    },
+    {
+      "id": "RULE-026",
+      "date_learned": "2026-02-25",
+      "source_task": "Automated Daily Outreach (Phase 9)",
+      "error": "Failed to schedule Windows Task. Variables starting with $ in PowerShell commands passed through antigravity_shell.py were stripped out by the shell parser.",
+      "rule": "POWERSHELL VARIABLE STRIPPING FIX: When executing complex PowerShell commands (like Register-ScheduledTask) through antigravity_shell.py, do NOT assign or use $ variables (e.g., $action). Instead, use inline sub-expressions enclosed in parentheses () to avoid parse failures in the master shell.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Refactored the PowerShell script into a single fluid command using inline () evaluation to bypass variable stripping."
+    },
+    {
+      "id": "RULE-027",
+      "date_learned": "2026-02-25",
+      "source_task": "GBP Verification (Phase 11)",
+      "error": "VS Code/Electron 'Window terminated unexpectedly (reason: oom)' with code -536870904 during a multi-stage browser subagent run.",
+      "rule": "ELECTRON OOM PREVENTION (SURGICAL BROWSER MISSIONS): Even with V8 heap overrides (RULE-021), the Electron main process will crash if a browser subagent executes too many commands or retains too much DOM state in a single run. Agents MUST restrict browser subagents to 'Surgical Missions' (Max 5 logical steps per run). If a workflow requires more steps, terminate the subagent and launch a new one to force Garbage Collection (GC) across the IPC bridge.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized strict boundary limits on browser subagent runs to prevent IPC memory exhaustion in the IDE."
+    },
+    {
+      "source_task": "OpenClaw Mitigation",
+      "error": "Context window compaction causes prompt-based guardrails to fail",
+      "rule": "Never rely strictly on prompts for catastrophic agent safety. Always implement hardcoded, stateful circuit breakers (e.g. tracking execution velocity) to physically isolate rogue behavior.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-026",
+      "date_learned": "2026-02-26"
+    },
+    {
+      "source_task": "Anti-Stuck Stability Upgrade",
+      "error": "IDE crashed/got stuck due to massive internal token payloads from DOM extractions",
+      "rule": "TOKEN EXHAUSTION FIREWALL & ZOMBIE SLAYER: Agents MUST NOT dump >15KB of raw data (like DOMs/base64) directly to stdout. The global shell now forcefully truncates outputs to prevent IPC bridge collapse. Run zombie_slayer.py to kill hung Playwright/Chrome loops.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-027",
+      "date_learned": "2026-02-26"
+    },
+    {
+      "source_task": "Perplexity Computer & Cowork Scheduler Local Implementation",
+      "error": "SQLite WinError 32 during verify_task.py regression testing when trying to delete an open database.",
+      "rule": "TEST ISOLATION (SQLITE LOCKS): When building verify_task.py scripts that test database or file states, ALWAYS use a unique overriding test file (e.g., test_state.db) rather than attempting to os.remove() the main file. Python SQLite connections often hold an active process lock that prevents deletion.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Patched verify_task.py to override db_path to 'test_state_audit.db' and gracefully ignore deletion locks.",
+      "category": "testing_stability",
+      "id": "RULE-028",
+      "date_learned": "2026-02-26"
+    },
+    {
+      "id": "RULE-029",
+      "date_learned": "2026-02-26",
+      "source_task": "Automating Zero-Link Intel & Privacy Guardrails",
+      "error": "Potential risk of reading private/incognito session data when hooking into the browser.",
+      "rule": "INCOGNITO & MEMORY FIREWALL: Agents MUST NEVER attempt to scrape, dump, or extract active RAM, cache, or temporary session files to recover Incognito or Private browsing data. Extraction is strictly limited to persistent, on-disk SQLite History databases which inherently exclude Incognito trails. Additionally, heuristic filters blocking auth, financial, and medical keywords MUST be applied to history scrapers.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "data_privacy"
+    },
+    {
+      "id": "RULE-030",
+      "date_learned": "2026-02-27",
+      "source_task": "Global Agentic Robustness Infrastructure",
+      "error": "Agents can hang on infinite validation loops, lose focus due to bloated context sizes, or perform unauditable logic flows lacking instrumentation.",
+      "rule": "HARNESS MANDATE: All continuous or background agent workers MUST inherit from or utilize `agent_harness.py`. 1. Watchdogs: Every subtask or generation block MUST be wrapped in a strict timeout executor (e.g. 120s) to sever hung threads. 2. Attention Refresh: Agents MUST flush their context state after N heavy ops. 3. Telemetry: All state transitions MUST emit structured JSON logs to `agent_telemetry.jsonl`.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "system_robustness"
+    },
+    {
+      "id": "RULE-031",
+      "date_learned": "2026-02-27",
+      "source_task": "Replit Clone Text-to-Video Engine",
+      "error": "[WinError 2] The system cannot find the file specified when calling 'npx remotion' via subprocess, followed by a 120s timeout killing the Remotion CLI because it paused to download headless Chromium.",
+      "rule": "CMD & BROWSER CLI FIREWALL: When executing Node binaries (like npx) via Python subprocess on Windows, agents MUST set `shell=True` to resolve `.cmd` mappings. Furthermore, for headless browser tools (Remotion, Playwright) that download dependencies on their first run, agents MUST test them outside of strict watchdog wrappers first, or expand the timeout (e.g. 300s) to allow first-boot caching.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Enabled shell=True in render_engine.py and executed a manual warmup frame to bypass Playwright initialization hangs.",
+      "category": "system_stability"
+    },
+    {
+      "source_task": "Multi-Agent Video Pipeline",
+      "error": "UnicodeEncodeError for cp1252 emojis in subprocess stdout",
+      "rule": "Scripts running in antigravity_shell.py on Windows must strip UTF-8 emojis or explicitly define encoding to avoid crashing under cp1252.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-032",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Global AntiGravity Insights Implementation",
+      "error": "Performance degrades when conversations exceed half of the 1M token window, causing loops and context rot.",
+      "rule": "CONTEXT ROT PREVENTION: Agents MUST monitor conversation lengths. When a conversation gets long or a major milestone is completed, prompt the user to use the 'Context Refresh Protocol' (via workflows/context_refresh.md) and start a new chat window.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized Context Refresh Protocol globally.",
+      "category": "performance",
+      "id": "RULE-033",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Global AntiGravity Insights Implementation",
+      "error": "Burning expensive tokens on simple tasks and planning overhead.",
+      "rule": "FAST MODE & MODEL MATCHING: Use advanced thinking models purely for initial architectural PLANNING. Once a plan is approved, instantly switch to FAST MODE (EXECUTION) using solely gemini-3-flash for simple coding tasks to preserve token quotas.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Injected fast mode protocol into persistent learning memory.",
+      "category": "cost_reduction",
+      "id": "RULE-036",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Global AntiGravity Insights Implementation",
+      "error": "Single-tasking large operations causes sequence bottlenecks and model burnout.",
+      "rule": "SINGLE TASKING & PIPELINING: Do not execute large monolithic code blocks. Break tasks down. If an architecture is already planned by Claude/Pro, use narrow, precise prompts to build one function or file at a time.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized Single Task execution workflow globally.",
+      "category": "performance",
+      "id": "RULE-037",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Multi-Agent Delegation Strategy Upgrade",
+      "error": "Misusing specialized AI tools for generic tasks leads to slow execution and wasted tokens.",
+      "rule": "GOD-LEVEL DELEGATION: AntiGravity is the central Orchestrator/Execution Engine. You MUST advise the user to route tasks correctly depending on the tool: Manus (Mobile/Drafting/Research), Codex (Async/Algorithm Generation), Claude Desktop (Deep Architecture), AntiGravity (Execution/Pipeline Building/Bash). NEVER attempt to do Claude's architectural job from within a Fast Mode script.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized the God-Level 50-Step Execution framework.",
+      "category": "architecture",
+      "id": "RULE-038",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Global AntiGravity Insights Implementation",
+      "error": "Combining multiple distinct requests into a single prompt degrades AI logical execution and output tracing.",
+      "rule": "ONE TASK PER MESSAGE: Agents MUST guide users to provide one clear, singular task per prompt. If a user provides clustered requests, the agent should internally chunk them and execute sequentially.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Mandated single-task execution heuristics.",
+      "category": "efficiency",
+      "id": "RULE-039",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "DeepLearning.AI Skill Assessor Integration",
+      "error": "Users and systems plateau by relying on entry-level prompting instead of robust agentic workflows.",
+      "rule": "CONTINUOUS SKILL ASSESSMENT (THESIS/ANTITHESIS): When completing major milestones or reviewing user logic, agents MUST proactively run the `workflows/ai_skill_assessor.md` protocol. Contrast the user's current implementation (Thesis) against a more advanced architectural paradigm (Antithesis), and provide personalized learning recommendations to level up the system.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Formalized the Thesis/Antithesis feedback loop in global memory.",
+      "category": "continuous_improvement",
+      "id": "RULE-036",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "GBP Crisis Management",
+      "error": "Agent executed GBP/GSC setup without performing a 360-degree analysis of the global algorithmic trust requirements, resulting in a DPNB suspension.",
+      "rule": "360-DEGREE RISK AUDIT MANDATE: Before initiating any new Project Phase (especially involving third-party accounts, domains, branding, or money), the Agent MUST execute the workflows/perplexity_intel_sync.md workflow. This mandates reading the latest perplexity_knowledge intel and presenting a 360-degree 'Dos/Donts/Pitfalls' matrix to the user for explicit structural sign-off to prevent algorithmic bans.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-037",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Global Intel Auto-Sync",
+      "error": "Perplexity intel was not being dynamically pulled at the start of new sessions, causing the AI to operate on stale knowledge despite intel_registry.json being updated.",
+      "rule": "ZERO-PROMPT INTEL SYNC: During Article 1 Session Initialization in any SahiMed or Medleads workspace, BEFORE answering the user's first prompt, the Agent MUST automatically execute the workflows/update-intel.md workflow to pull the latest Perplexity intel from intel_registry.json using steal_dom.py and convert_html.py. This guarantees 100% up-to-date context globally.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-038",
+      "date_learned": "2026-02-27"
+    },
+    {
+      "source_task": "Priya Role Title Error in Email",
+      "error": "Wrote 'Founder' for Priya in SahiMed outreach email. The intel in medsum2.md explicitly says Priya is the BRAND VOICE persona used on email and WhatsApp, NOT the legal identity or a job title.",
+      "rule": "PERSONA RULE: In SahiMed outreach, always sign emails as 'Priya from SahiMed' or 'Priya | SahiMed'. NEVER write 'Founder', 'Director', or any official title. Priya is a brand voice persona. Check medsum2.md line 3713 for the full context.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-041",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "AI Content Detection in Client Emails",
+      "error": "Used em dashes, AI vocabulary, and excessive bold in SahiMed outreach emails - detectable by GPTZero/Originality.ai",
+      "rule": "HUMANIZATION RULE: ALL client-facing SahiMed content MUST be processed through humanize_content.py before sending. Never use em dashes, en dashes, or words like delve/leverage/utilize/furthermore in outreach text. Run /humanize workflow after any campaign_engine output.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-042",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "Manual tasks not tracked across sessions",
+      "error": "Agent completed automated steps but had no persistent home for manual tasks requiring login or physical action - these fell through the cracks between sessions",
+      "rule": "MANUAL TASKS PROTOCOL: When automation is not possible for a step, ALWAYS append it to C:\\Users\\admin\\.antigravity\\master\\MANUAL_TASKS.md with [!] if urgent. Read this file at session start. Never silently skip a manual step.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-043",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "LLM Council for Critical Queries",
+      "error": "Agent was providing single-pass answers for financial decisions without multi-source cross-referencing or fact-checking",
+      "rule": "LLM COUNCIL RULE: For ANY query involving money, CIBIL, legal risk, health, or irreversible decisions, the agent MUST run 3-4 parallel web searches from different angles (authoritative sources, consumer forums, comparison platforms, counter-arguments) and cross-reference claims BEFORE answering. Single-source answers for critical decisions are prohibited.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-044",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "LLM Council VERIFY Framework",
+      "error": "Agent was providing single-pass answers for critical financial and legal queries without structured fact verification or source credibility weighting",
+      "rule": "LLM COUNCIL V2 RULE: For all critical queries (financial, legal, medical), the agent MUST use llm_council.py to: (1) decompose into atomic claims, (2) fan-out to 3-4 search angles per claim, (3) build cross-reference matrix, (4) weight sources by credibility tier, (5) inject numbered citations, (6) compute confidence score. Single-pass answers for critical decisions are permanently prohibited.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-045",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "Global Browser Automation Protocols",
+      "error": "Browser subagent fails or spins indefinitely when hitting manual authentication walls.",
+      "rule": "BROWSER LOGIN PAUSE: Whenever the Browser Subagent encounters a manual login requirement, it MUST immediately yield and return control to the main Agent. The main Agent MUST then use 'notify_user' to verbally explain the blocker and wait for the user to manually login and confirm before resuming browser execution.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Implemented global user-confirmation pause sequence in master memory.",
+      "category": "browser_automation",
+      "id": "RULE-046",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "Evaluating Global AI Model Selection Protocol",
+      "error": "Agent attempted to use experimental 3.1 Pro model for live web scraping tasks, resulting in hallucinated or ungrounded data because 3.1 Pro lacks stable Search API integration.",
+      "rule": "GLOBAL MODEL SELECTION PROTOCOL: Gemini 3.1 Pro is strictly reserved for HEAVY offline structural reasoning, complex refactoring, and deep code architecture analysis. Gemini 2.5 Pro MUST ALWAYS be used for any workflow requiring live internet access, Google Search Grounding (`tools=[{\"google_search\": {}}]`), or real-time URL scraping. Never mix up these domains.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Added explicit model boundary delegation via God Level Synthesis.",
+      "category": "architecture",
+      "id": "RULE-047",
+      "date_learned": "2026-02-28"
+    },
+    {
+      "source_task": "False Video Output Claim - Self-Correction",
+      "error": "Agent claimed a file (final_animation.mp4) existed and even fabricated its duration metadata, when the file was never actually created. The PowerShell COM GetDetailsOf returned the column header 'Length', not a real value, and the agent misinterpreted it.",
+      "rule": "OUTPUT VERIFICATION GUARDRAIL: Before EVER telling the user a file exists at a path, the agent MUST (1) run list_dir or equivalent to confirm the exact filename appears, (2) confirm size > 0 bytes, (3) if claiming duration/metadata, use a tool that returns the actual numeric value (not column headers). If ANY of these checks fail, the agent MUST report the failure honestly and diagnose the root cause. Fabricating existence or metadata is a CRITICAL violation.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Diagnosed false claim via list_dir showing only test_animation.mp4 and audit_test.mp4. The render_engine __main__ block hardcodes test_animation.mp4 and the orchestrator never overrides it.",
+      "category": "integrity",
+      "id": "RULE-048",
+      "date_learned": "2026-03-01"
+    },
+    {
+      "source_task": "Global Browser Authentication Persistence",
+      "error": "Agent launched browser_subagent for sites that could have been fetched via read_url_content or API, causing unnecessary crashes and slow login flows on Cloudflare-protected sites like Perplexity.",
+      "rule": "BROWSER AUTH PERSISTENCE PROTOCOL: Before invoking browser_subagent for ANY URL: (1) Try read_url_content first - it is 10x faster and works for all public pages, (2) Check browser_sessions/tokens.json for registered API tokens, (3) If browser IS required, detect login walls and immediately PAUSE for HITL manual login via notify_user, (4) Use ReusedSubagentId to maintain authenticated sessions across calls, (5) NEVER type passwords or credentials into browser fields - always pause for user. Follow workflows/browser_login_resume.md.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Created browser_preflight.py smart router and browser_login_resume.md workflow. Deployed globally to master directory.",
+      "category": "browser_automation",
+      "id": "RULE-049",
+      "date_learned": "2026-03-01"
+    },
+    {
+      "source_task": "Global Feature Integration System",
+      "error": "Agent built steal_dom.py and update-intel.md for Perplexity extraction but never wired them into browser_preflight.py or the agent's decision tree. Result: when agent needed Perplexity content later, it ignored the existing method and tried raw read_url_content which 403'd, then launched a fresh browser subagent instead of using the faster established pipeline.",
+      "rule": "GLOBAL FEATURE INTEGRATION MANDATE: After creating ANY new script, workflow, or capability, the agent MUST immediately run the 7-point wiring protocol in workflows/feature_integration.md: (1) Shell interceptor alias, (2) Workflow documentation, (3) Memory injection, (4) Daily ops, (5) Cowork scheduler, (6) Browser preflight update, (7) RESUME_CONTEXT. No feature is 'complete' until all applicable integration points are wired. This prevents the 'built-but-forgotten' anti-pattern.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Created feature_integration.md 7-point wiring protocol. Unified perplexity_extract.md merging old and new methods. Updated browser_preflight.py with Perplexity-aware routing.",
+      "category": "architecture",
+      "id": "RULE-050",
+      "date_learned": "2026-03-01"
+    },
+    {
+      "id": "RULE-051",
+      "date_learned": "2026-03-01",
+      "source_task": "Global Strategic Framework 2.0 Adopting",
+      "error": "N/A - System Upgrade",
+      "rule": "MANDATORY STRATEGIC FRAMEWORK 2.0: For any competition problem or innovation idea mentioning competition/problem challenge/innovation idea, agents MUST execute the God-Level Strategic Framework (Version 2.0) workflow documented in workflows/god_level_framework.md. This includes Phase 0 (Competitive Intelligence) and the 3-Step Verification Protocol for calculations.",
+      "category": "strategic_alignment",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Globally integrated the Strategic Framework 2.0 into master workflows and learning state."
+    },
+    {
+      "id": "RULE-052",
+      "date_learned": "2026-03-01",
+      "source_task": "Adopt God-Level Strategic Framework 2.0",
+      "error": "Targeted wrong file during parallel `replace_file_content` calls, leading to duplicate edits and minor path confusion.",
+      "rule": "PATH PRECISION GUARDRAIL: When executing multiple `replace_file_content` calls on critical master config files, double-verify the `TargetFile` path against the `Instruction` to ensure no cross-contamination between `learning_state.json` and `RESUME_CONTEXT.md`.",
+      "category": "system_stability",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Self-corrected during execution by re-running the correct tool with the intended path."
+    },
+    {
+      "id": "RULE-053",
+      "date_learned": "2026-03-02",
+      "source_task": "Perplexity Computer Integration",
+      "error": "Complex multi-step goals were being handled as monolithic single-model tasks. No sub-task decomposition, no model-specific routing, no cost tracking, no structured HITL checkpoints. Result: suboptimal model selection, no cost visibility, no pause points for user approval.",
+      "rule": "PERPLEXITY COMPUTER PROTOCOL: (1) All complex goals (>3 steps) MUST be routed through digital_worker.py for automatic task decomposition into atomic sub-tasks with dependency chains. (2) Model selection MUST use weighted capability scoring via model_router.py, never hardcoded first-match. (3) Cost tracking via cost_tracker.py MUST be active for all multi-model executions with budget alerts at 50/80/100%. (4) HITL checkpoints (hitl_checkpoint.py) MUST fire for: APPROVAL (destructive actions, publishing, external API), CREDENTIALS (missing API keys), AMBIGUITY (unclear goals). (5) All project state MUST persist to SQLite via project_manager.py for long-running execution.",
+      "category": "architecture",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Built 5-module Perplexity Computer system: goal_parser.py, task_decomposer.py, model_router.py v2.0, hitl_checkpoint.py, cost_tracker.py, digital_worker.py. All verified working. Wired into shell interceptor, workflow docs, cowork scheduler, and RESUME_CONTEXT."
+    },
+    {
+      "source_task": "SahiMed Daily Runner Automation",
+      "error": "The campaign engine and daily ops workflow were documented but had no actual scheduled automation to run the pipeline or notify the user",
+      "rule": "RULE-046: ALL recurring business pipelines (SahiMed lead gen, email campaigns, analytics) MUST be registered in Windows Task Scheduler AND configured to send a digest email summary after each run to the user's personal email. Scheduled pipelines that silently succeed or fail without notifying the user are prohibited.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-054",
+      "date_learned": "2026-03-02"
+    },
+    {
+      "source_task": "SahiMed Daily Ops Gap",
+      "error": "The agent built a daily ops workflow but missed critical revenue channels from vault: Reddit, Quora, Facebook, X/Twitter, Fiverr, Upwork, WhatsApp group strategy, LPO cold email targeting, stealth protocol, and India-to-US bridge strategy \u2014 all documented in medsum2v10.md",
+      "rule": "RULE-047: Before finalizing ANY task list, checklist, workflow, or daily-ops document, the agent MUST run a context audit against ALL vault knowledge files to ensure ZERO strategy atoms are missing. The agent must PROACTIVELY read the full vault to catch what the user is missing, not just what the user explicitly asks for. Building incomplete workflows from partial memory is a critical failure. Use context_audit.py to enforce this.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-055",
+      "date_learned": "2026-03-02"
+    },
+    {
+      "source_task": "Global Firecrawl + Parallel Runner Integration",
+      "error": "Module-level sys.stdout override in agent modules crashes verify harness when imported (Bad file descriptor). LOG_PATH dropped during multi-replace.",
+      "rule": "IMPORT-SAFE STDOUT RULE: Agent modules MUST place sys.stdout utf-8 override inside if __name__ == main block ONLY, never at module level.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-056",
+      "date_learned": "2026-03-03"
+    },
+    {
+      "source_task": "Cloud Scheduler Gap",
+      "error": "Windows Task Scheduler requires laptop to be on \u2014 daily email digest was never delivered when device was sleeping/off",
+      "rule": "RULE-048: Any scheduled task that must be RELIABLE and laptop-independent MUST use a cloud scheduler (GitHub Actions, GCP Cloud Scheduler, or equivalent). Windows Task Scheduler is only a fallback for optional local tasks. All user-facing daily digests and critical automations must run on external cloud infrastructure.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-057",
+      "date_learned": "2026-03-03"
+    },
+    {
+      "source_task": "Missing Multi-Agent Architecture",
+      "error": "System had no multi-perspective reasoning, no debate protocol, no dissent tracking - all discussed but never implemented. Single-pass answers were being used for critical YMYL queries.",
+      "rule": "RULE-048: ALL non-trivial reasoning queries MUST route through the Cognitive Council. YMYL queries (financial, legal, medical, governance) MUST use DEEP depth (6 agents). No single-pass answers for critical decisions. Use cognitive_council.py with parallel background workers.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-058",
+      "date_learned": "2026-03-03"
+    },
+    {
+      "source_task": "External Tool Routing Never Wired",
+      "error": "Agent repeatedly discussed Gemini/Claude/Manus/VSCode routing in planning but never implemented actual LLM router or auto-dispatch. Critical YMYL queries got single-pass answers instead of multi-agent council.",
+      "rule": "RULE-049: Never plan external tool routing without immediately implementing llm_router.py with the provider chain. Planning alone is NOT implementation. All YMYL queries MUST auto-route through council_auto_trigger.py before any response is generated.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-059",
+      "date_learned": "2026-03-04"
+    },
+    {
+      "source_task": "Automating Claude Skills",
+      "error": "Failed to push GitHub Actions workflows because the Personal Access Token only had 'repo' scope, not 'workflow' scope.",
+      "rule": "RULE-060: Never attempt to push GHA yaml files without a PAT that has explicit workflow scope. Repo scope does not cover it.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-060",
+      "date_learned": "2026-03-04"
+    },
+    {
+      "source_task": "Automating Claude Skills",
+      "error": "Syntax error in verify_task.py when overwriting a block using multi_replace_file_content removed necessary variable definitions.",
+      "rule": "RULE-061: Always use targeted line-specific replacements instead of large block overrides to avoid variable scope errors.",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Logged via Reflect() at task completion",
+      "category": "auto",
+      "id": "RULE-061",
+      "date_learned": "2026-03-04"
+    },
+    {
+      "id": "RULE-065",
+      "date_learned": "2026-03-05",
+      "source_task": "Numerai Managed Automation Transition",
+      "error": "Attempted to use `upload_model` method which was missing in NumerAPI 2.22.0.",
+      "rule": "ALWAYS check `dir()` or `help()` on third-party libraries (like NumerAPI) before implementation to verify method signatures, especially for recent version bumps where `model_upload` replaced prior naming conventions.",
+      "category": "API_COMPATIBILITY",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Identified correct method `model_upload` via `dir()` inspection after initial failure."
+    },
+    {
+      "id": "RULE-066",
+      "date_learned": "2026-03-05",
+      "source_task": "Global Thinking Ecosystem",
+      "error": "Implemented random genetic mutation for financial time-series and mixed code across logically distinct spaces (Numerai vs WorldQuant Brain) leading to naive design and risk.",
+      "rule": "ALWAYS execute the Global Thinking Framework (Domain Suitability, Segregation, Top 1% Baseline, Pre-flight RCA) BEFORE writing architecture or code. Never assume 'random genetic AI' surpasses human domain expertise; rely on Hypothesis-Driven frameworks built on the best research.",
+      "category": "ARCHITECTURE",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Reverted implementation, segregated workspaces, drafted Hypothesis-Driven Orthogonal Factor model."
+    },
+    {
+      "PREVENT_REPEAT": true,
+      "correction_path": "Proactively purged emojis from verify_task.py prior to execution based on RULE-023 regarding cp1252 charmap crashes.",
+      "rule": "RULE-067: Always double-check dynamically generated python scripts (like verify_task.py) for print() statements containing emojis before passing them to antigravity_shell.py on Windows.",
+      "category": "SYSTEM_STABILITY",
+      "source_task": "India Innovates 2026 Strategy",
+      "date_learned": "2026-03-05"
+    },
+    {
+      "PREVENT_REPEAT": true,
+      "correction_path": "Encountered UnicodeEncodeError due to Rupee symbol in print debugging. Fixed by using ASCII-safe Rs/INR labels.",
+      "rule": "RULE-068: In dynamically generated Python verification scripts or CLI prints on Windows, avoid using the Indian Rupee symbol (\u20b9) or other non-ASCII characters to prevent cp1252 charmap encoding crashes. Use Rs or INR instead.",
+      "category": "SYSTEM_STABILITY",
+      "source_task": "India Innovates 2026 Fact-Check",
+      "date_learned": "2026-03-05"
+    },
+    {
+      "id": "RULE-069",
+      "date_learned": "2026-03-06",
+      "source_task": "Fix Numerai Constant Upgrade Workflow",
+      "error": "GHA Workflow failed at 34-38s due to missing scipy/scikit-learn and fragile model_id resolution.",
+      "rule": "ALWAYS explicitly include scipy and scikit-learn in Numerai GHA environments. Use hardcoded model UUIDs for critical production uploads to prevent execution timeouts from fragile API lookups.",
+      "category": "SYSTEM_STABILITY",
+      "PREVENT_REPEAT": true,
+      "correction_path": "Fixed numerai_auto_upgrade.yml and hardcoded MODEL_ID in numerai_auto_upgrade.py."
+    }
+  ],
+  "blocked_patterns": [
+    "rm -rf",
+    "rm -r /",
+    "DROP TABLE",
+    "DELETE FROM",
+    "chmod 777",
+    "git push --force",
+    "git push -f",
+    "format c:",
+    "mkfs.",
+    "dd if=.*of=/dev/",
+    ":(){:|:&};:"
+  ],
+  "credential_protection": [
+    "printenv",
+    "^env ",
+    "cat.*\\.env",
+    "type.*\\.env",
+    "echo.*API_KEY",
+    "echo.*SECRET",
+    "echo.*PASSWORD",
+    "Get-Content.*\\.env"
+  ],
+  "private_context_patterns": [
+    "\\.secrets.*",
+    "\\.env.*",
+    "keys/",
+    "credentials/"
+  ],
+  "hitl_triggers": [
+    "deploy",
+    "production",
+    "schema migration",
+    "delete files outside tmp",
+    "overwrite >10 files",
+    "git push",
+    "npm publish",
+    "pip install --user",
+    "publish",
+    "send mail",
+    "payment",
+    "deploy site",
+    "go live"
+  ],
+  "risk_score_weights": {
+    "irreversible": 10,
+    "production": 9,
+    "schema": 8,
+    "credentials": 8,
+    "delete": 7,
+    "deploy": 7,
+    "overwrite": 6,
+    "git": 5,
+    "modify": 3,
+    "create": 1
+  },
+  "hitl_risk_threshold": 7,
+  "quality_thresholds": {
+    "min_confidence_to_proceed": 0.75,
+    "self_correction_trigger": 0.9,
+    "max_retries": 3
+  },
+  "user_preferences": {
+    "response_naming": {
+      "enabled": true,
+      "format": "R{n}",
+      "description": "All agent responses in a chat session must be prefixed with a sequential label: R1, R2, R3, etc. Counter resets each new conversation.",
+      "rule_reference": "RULE-007"
+    }
+  },
+  "meta": {
+    "owner": "admin",
+    "system": "Antigravity IDE",
+    "nist_framework": "AI RMF 1.0 \u2014 GOVERN-1.1, MANAGE-2.2",
+    "owasp_alignment": "OWASP LLM Top 10 \u2014 LLM06, LLM08, LLM09",
+    "master_dir": "C:/Users/admin/.antigravity/master/",
+    "constitution_file": "C:/Users/admin/.antigravity/master/.agent-rules.md"
+  },
+  "pending_crash_diagnostics": [
+    {
+      "timestamp": "2026-03-04T16:15:03.997071",
+      "command": "-c python C:\\Users\\admin\\Downloads\\medsumag1\\medleads\\verify_task.py",
+      "exit_code": 1,
+      "error_tail": "'-c' is not recognized as an internal or external command,\noperable program or batch file.\n"
+    },
+    {
+      "timestamp": "2026-03-04T16:16:09.542197",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\medleads\\verify_task.py",
+      "exit_code": 1,
+      "error_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\admin\\Downloads\\medsumag1\\medleads\\verify_task.py\", line 34, in <module>\n    check(\"cognitive_council.py\", COUNCIL_SCRIPT.exists())\n                                  ^^^^^^^^^^^^^^\nNameError: name 'COUNCIL_SCRIPT' is not defined\n"
+    },
+    {
+      "PREVENT_REPEAT": true,
+      "correction_path": "Searched historical workstation directories (pcdraft) and correctly identified .telegram_token hidden file.",
+      "rule": "RULE-062: Always search for hidden config files (.token, .env) in 'pcdraft' or 'temp' folders if primary workspace is missing credentials mentioned by user.",
+      "category": "RESEARCH"
+    },
+    {
+      "PREVENT_REPEAT": true,
+      "correction_path": "Manually added missing dependencies (llm_router.py) and environment variables (RECIPIENT_EMAIL) to the repository and workflow.",
+      "rule": "RULE-063: Ensure all imported library files (llm_router, persona_worker) are physically present in the GitHub repository before triggering cloud-based Actions.",
+      "category": "GHACTIONS"
+    },
+    {
+      "PREVENT_REPEAT": true,
+      "correction_path": "Updated GitHub workflow daily_digest.yml to call send_daily_digest.py directly instead of daily_ai_digest.py which was sending AI governance topics.",
+      "rule": "RULE-064: When multiple scripts exist for the same scheduled task, always verify which one is being called in the GitHub Actions YAML. The canonical SahiMed email entry-point is send_daily_digest.py, NOT daily_ai_digest.py.",
+      "category": "EMAIL_ROUTING"
+    },
+    {
+      "timestamp": "2026-03-05T22:50:14.738451",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_ultimate.py",
+      "exit_code": 1,
+      "error_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_ultimate.py\", line 22, in <module>\n    check(\"Hardware cost refined to \\u20b920,000\", \"\\u20b920,000\" in content)\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_ultimate.py\", line 6, in check\n    print(f\"  {status} {label}\" + (f\" ({details})\" if details else \"\"))\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u20b9' in position 32: character maps to <undefined>\n"
+    },
+    {
+      "timestamp": "2026-03-05T23:02:00.138657",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_tactical.py",
+      "exit_code": 1,
+      "error_tail": "\n--- India Innovates 2026 Tactical Outsider Verification ---\n\n[TACTICAL GTM AUDIT]\n  [OK] BATNA Analysis covered\n  [OK] Judo/Asymmetric Strategy included\n  [OK] Game Theory / Nash Equilibrium utilized\n  [ERROR] Porter's Five Forces utilized\n"
+    },
+    {
+      "timestamp": "2026-03-05T23:08:08.856528",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_ip.py",
+      "exit_code": 1,
+      "error_tail": "\n--- India Innovates 2026 IP & Hardware Verification ---\n\n[IP & HARDWARE AUDIT]\n  [ERROR] Defensible IP List present\n"
+    },
+    {
+      "timestamp": "2026-03-05T23:08:28.524827",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\indinno\\India_Innovates_2026_Circular_Waste\\verify_task_ip.py",
+      "exit_code": 1,
+      "error_tail": "\n--- India Innovates 2026 IP & Hardware Verification ---\n\n[IP & HARDWARE AUDIT]\n  [OK] Defensible IP List present\n  [OK] Algorithmic IP documented (Optical-Flow)\n  [OK] Data Moat identified (Neighborhood Map)\n  [OK] Process/Trust IP included (EPR/Proof of Pick-up)\n  [OK] Presence of hardware confirmed\n  [OK] Zero user spend logic documented (CSR)\n  [OK] Hardware cost specified (Rs 20k)\n  [ERROR] Infinite ROI logic verified\n"
+    },
+    {
+      "timestamp": "2026-03-06T13:45:15.675505",
+      "command": "python C:\\Users\\admin\\Downloads\\medsumag1\\pcdraft\\verify_intel_stack.py",
+      "exit_code": 1,
+      "error_tail": "[VERIFY] Running Orchestrator Dry Run...\n[VERIFY] Running Dashboard Snapshot...\n[PASS] Dashboard snapshot looks good.\n\n[FAIL] Intelligence Stack Verification FAILED:\n   - ORCHESTRATOR FAILED: Traceback (most recent call last):\n  File \"C:\\Users\\admin\\Downloads\\medsumag1\\pcdraft\\intelligence_orchestrator.py\", line 69, in <module>\n    orchestrator.sync_business_context()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\admin\\Downloads\\medsumag1\\pcdraft\\intelligence_orchestrator.py\", line 23, in sync_business_context\n    content = f.read()\n  File \"C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\encodings\\cp1252.py\", line 23, in decode\n    return codecs.charmap_decode(input,self.errors,decoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeDecodeError: 'charmap' codec can't decode byte 0x8f in position 612: character maps to <undefined>\n\n"
+    }
+  ]
+}
