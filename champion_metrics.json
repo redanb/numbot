@@ -1,12 +1,13 @@
 {
-    "best_cv_spearman": 0.0333,
-    "params": {
-        "n_estimators": 300,
-        "max_depth": 5,
-        "learning_rate": 0.05,
-        "subsample": 0.8,
-        "colsample_bytree": 0.5,
-        "notes": "Baseline poker-ported Market Regime logic from Round 1214 (anant0)"
-    },
-    "updated_at": "2026-03-05T00:00:00Z"
+  "best_score": 0.03481980542482444,
+  "params": {
+    "n_estimators": 1129,
+    "max_depth": 11,
+    "learning_rate": 0.02474154649471658,
+    "subsample": 0.5042398443035976,
+    "colsample_bytree": 0.7203580775782294,
+    "gamma": 7.586041780776247
+  },
+  "timestamp": "2026-03-11T06:48:58.906800",
+  "version": "2.0.0-guardrail"
 }
