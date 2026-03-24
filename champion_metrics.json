@@ -11,16 +11,16 @@
   "timestamp": "2026-03-17T01:53:21.855641",
   "version": "2.0.0-guardrail",
   "anant0": {
-    "best_score": 0.03320327121140946,
+    "best_score": 0.03485150036886893,
     "params": {
-      "n_estimators": 1998,
-      "max_depth": 3,
-      "learning_rate": 0.009864148373980123,
-      "subsample": 0.7327433773264908,
-      "colsample_bytree": 0.5459344147087863,
-      "gamma": 1.5856949225859065
+      "n_estimators": 2046,
+      "max_depth": 4,
+      "learning_rate": 0.05193326098869746,
+      "subsample": 0.9435532940968059,
+      "colsample_bytree": 0.47954250158303563,
+      "gamma": 3.2387717149964304
     },
-    "timestamp": "2026-03-24T13:05:16.083583",
+    "timestamp": "2026-03-24T18:59:17.035316",
     "version": "3.0.0-multi-model"
   }
 }
