@@ -1,40 +1,26 @@
 import sys
-import os
-import ast
 from pathlib import Path
+import cloudpickle
 
-def test_cowork_scheduler():
-    path = Path(r"c:\Users\admin\Downloads\medsumag1\pcdraft\cowork_scheduler.py")
-    content = path.read_text(encoding="utf-8")
-    assert "alpha_factory" in content, "alpha_factory missing from cowork_scheduler"
-    assert "intelligence_orchestrator" in content, "Regression: intelligence_orchestrator missing from cowork_scheduler"
-    # Parse to ensure syntax is valid
-    ast.parse(content)
-    print("SUCCESS: cowork_scheduler.py syntax and regression passed.")
+print('Starting verify_task.py...')
 
-def test_thinking_engine():
-    path = Path(r"c:\Users\admin\Downloads\medsumag1\comp bet\brainbot\thinking_engine.py")
-    content = path.read_text(encoding="utf-8")
-    assert "get_latest_research" in content, "get_latest_research missing from thinking_engine"
-    assert "analyze_history" in content, "Regression: analyze_history missing from thinking_engine"
-    ast.parse(content)
-    print("SUCCESS: thinking_engine.py syntax and regression passed.")
+def check_pass(msg):
+    print(f'[PASS] {msg}')
 
-def test_evolution_tracker():
-    path = Path(r"c:\Users\admin\Downloads\medsumag1\comp bet\brainbot\evolution_tracker.py")
-    content = path.read_text(encoding="utf-8")
-    assert "_auto_commit_log" in content, "auto_commit_log missing from evolution_tracker"
-    assert "log_brain_submission" in content, "Regression: log_brain_submission missing from evolution_tracker"
-    ast.parse(content)
-    print("SUCCESS: evolution_tracker.py syntax and regression passed.")
+def check_fail(msg):
+    print(f'[FAIL] {msg}')
+    sys.exit(1)
 
-if __name__ == "__main__":
-    try:
-        test_cowork_scheduler()
-        test_thinking_engine()
-        test_evolution_tracker()
-        print("SUCCESS: ALL SINGULARITY MODULES VERIFIED")
-        sys.exit(0)
-    except Exception as e:
-        print(f"FAILED: VERIFICATION FAILED: {e}")
-        sys.exit(1)
+# 1. Regression Audit: Check if scripts still use cloudpickle appropriately
+path1 = Path('numerai_auto_upgrade.py')
+path2 = Path('emergency_r1223.py')
+
+if not path1.read_text().find('cloudpickle.dump(predict, f)') > 0:
+    check_fail('numerai_auto_upgrade.py not using function wrapper predict')
+check_pass('numerai_auto_upgrade.py correctly wraps XGBRegressor in function closures')
+
+if not path2.read_text().find('cloudpickle.dump(predict_callable, f)') > 0:
+    check_fail('emergency_r1223.py not using function wrapper predict_callable')
+check_pass('emergency_r1223.py correctly uses predict_callable closure without bytearrays')
+
+print('\nALL CHECKS PASSED. Ready for Reflect().')

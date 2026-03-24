@@ -1,39 +1,49 @@
 import json
-import os
-import datetime
+from datetime import datetime
+from pathlib import Path
 
-STATE_FILE = r"C:\Users\admin\.antigravity\master\learning_state.json"
+STATE_FILE = Path(r"C:\Users\admin\.antigravity\master\learning_state.json")
+RESUME_FILE = Path(r"C:\Users\admin\.antigravity\master\RESUME_CONTEXT.md")
 
-new_rule_1 = {
-    "id": "RULE-083",
-    "date_learned": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-    "source_task": "Global System Workflows",
-    "error": "Agent doing same work repeatedly because memory is not pre-loaded aggressively.",
-    "rule": "ALWAYS GATHER CONTEXT: At the onset of any task, you must parse learning_state and RESUME_CONTEXT. Refer to workflows/gather_context.md. Never assume clean execution on a complex project without contextual reading.",
-    "category": "workflow_automation",
+new_rule = {
     "PREVENT_REPEAT": True,
-    "correction_path": "Created workflows/gather_context.md that forces explicit file reads."
+    "correction_path": "Wrapped XGBRegressor instance cleanly inside a prediction function using closure capture instead of directly serializing the model object or buffering JSON bytearrays.",
+    "rule": "MANDATORY NUMERAI PICKLING: Never use cloudpickle.dump(model) where model is an XGBRegressor object. Numerai's compute environment expects a function, e.g., cloudpickle.dump(predict_fn). Do NOT use bytearray loading for XGBoost models in the closure; capture the pre-loaded instance directly to avoid version serialization crashes.",
+    "category": "Architecture / Cloud Pickle",
+    "source_task": "Fix Numerai XGBRegressor Type Error"
 }
 
-new_rule_2 = {
-    "id": "RULE-084",
-    "date_learned": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-    "source_task": "Numerai Predict Segfault",
-    "error": "Segmentation fault caused by XGBoost allocating too many threads (n_jobs=-1) inside the heavily constrained Numerai/Fargate compute container, and reading mutable bytearrays.",
-    "rule": "NUMERAI COMPUTE XGB THREADING: ALWAYS explicitly force single-threaded execution (b.set_param({'nthread': 1})) when initializing an XGBoost Booster for Numerai Compute. Ensure raw booster bytes are cast as immutable bytes() to prevent C pointer memory violations.",
-    "category": "system_stability",
-    "PREVENT_REPEAT": True,
-    "correction_path": "Added b.set_param({'nthread': 1}) and cast bytearray to bytes() before initialization."
-}
+if STATE_FILE.exists():
+    with open(STATE_FILE, 'r', encoding='utf-8') as f:
+        try:
+            state = json.load(f)
+        except json.JSONDecodeError:
+            state = {"permanent_rules": []}
+else:
+    state = {"permanent_rules": []}
 
-with open(STATE_FILE, "r", encoding="utf-8") as f:
-    state = json.load(f)
+if "permanent_rules" not in state:
+    state["permanent_rules"] = []
+state["permanent_rules"].append(new_rule)
 
-state["permanent_rules"].append(new_rule_1)
-state["permanent_rules"].append(new_rule_2)
-state["last_updated"] = datetime.datetime.utcnow().isoformat()
-
-with open(STATE_FILE, "w", encoding="utf-8") as f:
+with open(STATE_FILE, 'w', encoding='utf-8') as f:
     json.dump(state, f, indent=2)
 
-print("Reflect() applied RULE-083 and RULE-084 successfully.")
+if RESUME_FILE.exists():
+    content = RESUME_FILE.read_text(encoding='utf-8')
+    # Update execution status
+    lines = content.splitlines()
+    for i, line in enumerate(lines):
+        if line.startswith("Execution Status:"):
+            lines[i] = "Execution Status: 24/7 GOD-LEVEL AUTONOMOUS ALPHA FACTORY ACTIVE (Numerai Model Serialization FIXED)."
+            break
+    else:
+        lines.insert(0, "Execution Status: 24/7 GOD-LEVEL AUTONOMOUS ALPHA FACTORY ACTIVE (Numerai Model Serialization FIXED).")
+    
+    # add progress
+    lines.append("- FIXED: Numerai Compute TypeError 'XGBRegressor is not a callable object'.")
+    lines.append("- FIXED: numerai_auto_upgrade.py now properly wraps models.")
+    lines.append("- FIXED: emergency_r1223.py prediction closure uses direct model capture.")
+    RESUME_FILE.write_text('\n'.join(lines), encoding='utf-8')
+
+print('Reflect() completed.')

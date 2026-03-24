@@ -18,7 +18,7 @@ def trigger_cloud_alpha_factory(universe="TOP3000"):
     Triggers the GitHub Action workflow for Alpha Factory.
     Requires GITHUB_TOKEN to be set in .env or environment.
     """
-    repo = "redanb/numbot" # Based on git remote: https://github.com/redanb/numbot.git
+    repo = "redanb/brainbot" # Based on git remote in brainbot folder
     workflow_id = "alpha_factory_cloud.yml"
     token = os.environ.get("GITHUB_TOKEN")
     
@@ -32,7 +32,7 @@ def trigger_cloud_alpha_factory(universe="TOP3000"):
         "Accept": "application/vnd.github.v3+json"
     }
     data = {
-        "ref": "main",
+        "ref": "master",
         "inputs": {
             "target_universe": universe
         }

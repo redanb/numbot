@@ -103,6 +103,16 @@ def run_upload():
     logger.info("Serializing model via cloudpickle...")
     predict_fn = create_predict_function(model, features)
     
+    # [GATEKEEPER] Verify before dump
+    sys.path.append(r"c:\Users\admin\Downloads\medsumag1\brainbot")
+    try:
+        from submission_gatekeeper import verify_model_integrity
+        if not verify_model_integrity(predict_fn, features):
+            logger.error("[GATEKEEPER] Model integrity check failed. Aborting serialization.")
+            return
+    except ImportError:
+        logger.warning("[GATEKEEPER] submission_gatekeeper.py not found. Proceeding with caution.")
+
     with open(UPLOAD_PATH, "wb") as f:
         cloudpickle.dump(predict_fn, f)
     

@@ -293,34 +293,27 @@ def main():
         from scipy.stats import rankdata
         from xgboost import XGBRegressor
 
-        # 1. Get the latest model and capture its structure as bytes
+        # 1. Get the latest model and load it locally first
         json_files = sorted(MODEL_DIR.glob("xgb_r1223_*.json"))
         if not json_files:
              raise FileNotFoundError("No trained XGB model JSON found to embed.")
-        
         latest_model_path = json_files[-1]
-        # Read the raw JSON string
-        model_json_str = latest_model_path.read_text(encoding="utf-8")
         
-        # 2. Define the closure with the JSON string embedded
-        def predict_callable(live_features, live_benchmark_models):
-            """Numerai Compute standard callable (Self-Contained)."""
-            import numpy as np
+        # Pre-load the model to capture in closure
+        capture_model = XGBRegressor()
+        capture_model.load_model(str(latest_model_path))
+        
+        # 2. Define the exact predict function expected by Numerai
+        def predict_callable(live_features: pd.DataFrame) -> pd.DataFrame:
             import pandas as pd
-            from xgboost import XGBRegressor
+            import numpy as np
             from scipy.stats import rankdata
-            
-            # Use the captured model_json_str (provided by closure)
-            m = XGBRegressor()
-            # XGBoost load_model accepts a file path OR a bytearray/string of the model content
-            model_bytes = bytearray(model_json_str, "utf-8")
-            m.load_model(model_bytes)
             
             # Select features (top 50 as used in training)
             avail = [c for c in live_features.columns if c.startswith("feature_")][:50]
             X = live_features[avail].fillna(0).astype(np.float32)
             
-            preds = m.predict(X)
+            preds = capture_model.predict(X)
             ranked = (rankdata(preds) - 0.5) / len(preds)
             return pd.DataFrame({"prediction": ranked}, index=live_features.index)
 

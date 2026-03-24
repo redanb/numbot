@@ -1,0 +1,90 @@
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\anant0_fixed_callable.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\anant0_uploaded.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features: pandas.DataFrame) -> pandas.DataFrame
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260311_162546.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260311_162949.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260311_163954.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260311_172955.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260312_040319.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: pandas.DataFrame) -> pandas.Series
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260312_044036.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features: pandas.DataFrame, live_benchmark_models: pandas.DataFrame) -> pandas.DataFrame
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1221_20260312_044219.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features: pandas.DataFrame, live_benchmark_models: pandas.DataFrame) -> pandas.DataFrame
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\callable_r1223_20260313_142043.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features, live_benchmark_models)
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\self_contained_r1223_20260313_154355.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features, live_benchmark_models)
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\self_contained_r1223_20260314_102853.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features, live_benchmark_models)
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_061710.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_061921.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_071316.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_112103.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_115009.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260303_120114.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260305_134457.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260306_141211.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260306_141419.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260306_141640.pkl...
+  Type: <class 'dict'>
+  Callable: False
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\xgb_model_20260311_164437.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_data: 'pd.DataFrame') -> 'pd.Series'
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\self_contained_r1223_20260313_154355.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features, live_benchmark_models)
+Checking c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models\self_contained_r1223_20260314_102853.pkl...
+  Type: <class 'function'>
+  Callable: True
+  Signature: (live_features, live_benchmark_models)

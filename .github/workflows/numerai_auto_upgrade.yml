@@ -8,6 +8,8 @@ on:
 jobs:
   upgrade:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -28,6 +30,12 @@ jobs:
           NUMERAI_PUBLIC_ID: ${{ secrets.NUMERAI_PUBLIC_ID }}
           NUMERAI_SECRET_KEY: ${{ secrets.NUMERAI_SECRET_KEY }}
         run: python numerai_auto_upgrade.py
+
+      - name: Run Sentinel Self-Correction
+        env:
+          NUMERAI_PUBLIC_ID: ${{ secrets.NUMERAI_PUBLIC_ID }}
+          NUMERAI_SECRET_KEY: ${{ secrets.NUMERAI_SECRET_KEY }}
+        run: python numerai_sentinel.py
 
       - name: Commit Updated Metrics
         run: |
