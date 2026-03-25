@@ -22,5 +22,18 @@
     },
     "timestamp": "2026-03-24T18:59:17.035316",
     "version": "3.0.0-multi-model"
+  },
+  "ananta": {
+    "best_score": 0.03392064690701399,
+    "params": {
+      "n_estimators": 2749,
+      "max_depth": 8,
+      "learning_rate": 0.07638787434046158,
+      "subsample": 0.7698135301798046,
+      "colsample_bytree": 0.7962270281079868,
+      "gamma": 8.730126581165818
+    },
+    "timestamp": "2026-03-25T01:56:57.440115",
+    "version": "3.0.0-multi-model"
   }
 }
