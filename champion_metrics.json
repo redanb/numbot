@@ -24,16 +24,16 @@
     "version": "3.0.0-multi-model"
   },
   "ananta": {
-    "best_score": 0.034635926114593346,
+    "best_score": 0.0346404493640779,
     "params": {
-      "n_estimators": 2084,
+      "n_estimators": 1310,
       "max_depth": 6,
-      "learning_rate": 0.05597069549319572,
-      "subsample": 0.8768012240970215,
-      "colsample_bytree": 0.6896524048999015,
-      "gamma": 3.576491935277364
+      "learning_rate": 0.01970395649323737,
+      "subsample": 0.5330208979196899,
+      "colsample_bytree": 0.7084080643587456,
+      "gamma": 6.028392016487087
     },
-    "timestamp": "2026-03-25T13:02:43.625914",
+    "timestamp": "2026-03-26T13:07:44.959110",
     "version": "3.0.0-multi-model"
   }
 }
