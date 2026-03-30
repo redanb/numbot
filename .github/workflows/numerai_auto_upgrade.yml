@@ -17,13 +17,28 @@ jobs:
           persist-credentials: true
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Install Dependencies
         run: |
-          pip install pandas xgboost optuna numerapi cloudpickle scipy scikit-learn
+          pip install -r requirements.txt
+
+      - name: Get current week
+        id: date
+        run: echo "week=$(date +'%Y-%U')" >> $GITHUB_OUTPUT
+
+      - name: Cache Numerai datasets
+        uses: actions/cache@v4
+        with:
+          path: |
+            train.parquet
+            validation.parquet
+          key: numerai-data-v5.0-week-${{ steps.date.outputs.week }}
+          restore-keys: |
+            numerai-data-v5.0-
 
       - name: Run Auto-Upgrade
         env:
@@ -31,11 +46,11 @@ jobs:
           NUMERAI_SECRET_KEY: ${{ secrets.NUMERAI_SECRET_KEY }}
         run: python numerai_auto_upgrade.py
 
-      - name: Run Sentinel Self-Correction
+      - name: Run Brainbot Self-Correction
         env:
           NUMERAI_PUBLIC_ID: ${{ secrets.NUMERAI_PUBLIC_ID }}
           NUMERAI_SECRET_KEY: ${{ secrets.NUMERAI_SECRET_KEY }}
-        run: python numerai_sentinel.py
+        run: python numerai_brainbot.py
 
       - name: Commit Updated Metrics
         run: |
