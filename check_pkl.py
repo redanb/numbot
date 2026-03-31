@@ -3,8 +3,8 @@ import glob
 from inspect import signature
 import sys
 
-with open('out.txt', 'w', encoding='utf-8') as out:
-    for path in glob.glob('c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models/*.pkl') + glob.glob('c:/Users/admin/Downloads/medsumag1/pcdraft/numerai/models/self_contained*.pkl'):
+with open('pkl_analysis.txt', 'w', encoding='utf-8') as out:
+    for path in glob.glob('*.pkl'):
         out.write(f'Checking {path}...\n')
         try:
             with open(path, 'rb') as f:

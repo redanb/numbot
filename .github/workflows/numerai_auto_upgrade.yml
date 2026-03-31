@@ -22,6 +22,18 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
+      - name: Pre-Flight Secret Check
+        run: |
+          if [ -z "${{ secrets.NUMERAI_PUBLIC_ID }}" ]; then
+            echo "::error::NUMERAI_PUBLIC_ID is missing from GitHub Secrets!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.NUMERAI_SECRET_KEY }}" ]; then
+            echo "::error::NUMERAI_SECRET_KEY is missing from GitHub Secrets!"
+            exit 1
+          fi
+          echo "All secrets present."
+
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
