@@ -1,0 +1,30 @@
+name: Global Ecosystem Workflow Healer
+
+on:
+  schedule:
+    - cron: '30 * * * *' # Run hourly at 30 minutes past
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-heal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          # Need full history or at least enough to commit
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Global Healer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Install dependencies required by the auto-healer and any imported files
+          python gha_auto_healer.py

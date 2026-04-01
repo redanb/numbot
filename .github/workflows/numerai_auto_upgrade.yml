@@ -8,8 +8,10 @@ on:
 jobs:
   upgrade:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: "node20"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
