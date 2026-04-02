@@ -59,14 +59,33 @@ def load_numerai_data(napi):
     if not pathlib.Path(VAL_FILE).exists():
         logger.info("Downloading validation.parquet...")
         napi.download_dataset(f"{DATASET_VERSION}/validation.parquet", dest_path=VAL_FILE)
-    train = pd.read_parquet(TRAIN_FILE)
+    
+    logger.info("Reading validation.parquet...")
     val = pd.read_parquet(VAL_FILE)
-    feature_cols = [c for c in train.columns if c.startswith("feature_")]
+    feature_cols = [c for c in val.columns if c.startswith("feature_")]
     keep = [ERA_COL, TARGET_COL] + feature_cols
-    train = train[[c for c in keep if c in train.columns]].copy()
     val = val[[c for c in keep if c in val.columns]].copy()
+    
+    logger.info("Reading train.parquet in memory-efficient chunks (~30% sampling)...")
+    import pyarrow.parquet as pq
+    import gc
+    pf = pq.ParquetFile(TRAIN_FILE)
+    batches = []
+    if pf.num_row_groups > 3:
+        for i in range(pf.num_row_groups):
+            if i % 3 == 0:  # Sample ~33%
+                batches.append(pf.read_row_group(i, columns=keep).to_pandas())
+        train = pd.concat(batches, ignore_index=True)
+        del batches
+    else:
+        # Fallback if few row groups
+        train = pd.read_parquet(TRAIN_FILE, columns=keep)
+        train = train.sample(frac=0.33, random_state=42)
+
+    gc.collect()
+
     _DATA_CACHE.update({"train": train, "val": val, "features": feature_cols})
-    logger.info(f"Loaded {len(train)} train, {len(val)} val, {len(feature_cols)} features.")
+    logger.info(f"Loaded {len(train)} train (sampled), {len(val)} val, {len(feature_cols)} features.")
     return train, val, feature_cols
 
 
@@ -142,12 +161,12 @@ def compute_fallback_weights(val, feature_cols):
 
 # ─── RESILIENT WRAPPER ────────────────────────────────────────────────────────
 
-def create_resilient_predict(model_b64, feature_cols, fallback_weights):
+def create_resilient_predict(model_instance, feature_cols, fallback_weights):
     """
     Creates a self-contained closure that:
-    1. Tries XGBoost with embedded B64-JSON weights (primary)
-    2. Falls back to Pure NumPy correlation weights (secondary)
-    3. Falls back to uniform shuffle (absolute failsafe)
+    1. Uses native XGBoost instance closure (avoiding JSON buffer overflow and sigkill).
+    2. Falls back to Pure NumPy correlation weights (secondary).
+    3. Falls back to uniform shuffle (absolute failsafe).
     
     MUST be serialized with cloudpickle.dump(..., protocol=2) to avoid
     Python version incompatibility between 3.14 (local) and 3.12 (Numerai).
@@ -157,9 +176,6 @@ def create_resilient_predict(model_b64, feature_cols, fallback_weights):
     def predict(live_features):
         import pandas as pd
         import numpy as np
-        import base64
-        import tempfile
-        import os
 
         # Feature selection
         feat_cols = [c for c in feature_cols if c in live_features.columns]
@@ -171,20 +187,13 @@ def create_resilient_predict(model_b64, feature_cols, fallback_weights):
             X = np.hstack([X, pad])
         X = X[:, :n_features]
 
-        # PRIMARY: XGBoost
+        # PRIMARY: XGBoost Native Execution
         try:
-            import xgboost as xgb
-            tf = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
-            tf.write(base64.b64decode(model_b64))
-            tf.close()
-            mdl = xgb.XGBRegressor()
-            mdl.load_model(tf.name)
-            os.unlink(tf.name)
-            preds = mdl.predict(X.astype(np.float32))
+            preds = model_instance.predict(X.astype(np.float32))
             ranked = pd.Series(preds).rank(pct=True).values
             return pd.DataFrame({'prediction': ranked}, index=live_features.index)
         except Exception as e_xgb:
-            print(f"[FALLBACK-1] XGBoost failed: {e_xgb}")
+            print(f"[FALLBACK-1] XGBoost Native failed: {e_xgb}")
 
         # SECONDARY: Pure NumPy linear
         try:
@@ -265,14 +274,9 @@ def run_upgrade():
 
         logger.info(f"!!! EVOLUTION SUCCESS !!! {model_name}: {final_val_score:.5f}")
 
-        # Serialize model as B64-JSON
-        final_model.save_model("_tmp_xgb.json")
-        with open("_tmp_xgb.json", "rb") as fh:
-            model_b64 = base64.b64encode(fh.read()).decode("utf-8")
-        os.remove("_tmp_xgb.json")
-
-        # Build resilient closure
-        predict_fn = create_resilient_predict(model_b64, feature_cols, fallback_weights)
+        # ── NATIVE PICKLING INSTEAD OF B64 (PREVENTS NUMERAI NODE SIGKILL) ──
+        logger.info(f"[{model_name}] Building resilient native prediction closure.")
+        predict_fn = create_resilient_predict(final_model, feature_cols, fallback_weights)
 
         # Pre-flight self-test
         try:
