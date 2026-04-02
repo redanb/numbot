@@ -19,7 +19,8 @@ import pathlib
 import cloudpickle
 import pandas as pd
 import numpy as np
-import xgboost as xgb
+import lightgbm as lgb
+import numpy.linalg as la
 import optuna
 from numerapi import NumerAPI
 
@@ -38,7 +39,7 @@ DATASET_VERSION = "v5.0"
 TRAIN_FILE = "train.parquet"
 VAL_FILE = "validation.parquet"
 ERA_COL = "era"
-TARGET_COL = "target"
+TARGET_COLS = ["target", "target_nomi_v4_20", "target_jerome_v4_20", "target_cyrus_v4_20"]
 N_CV_ERAS = 4
 _DATA_CACHE = {}
 
@@ -63,8 +64,13 @@ def load_numerai_data(napi):
     logger.info("Reading validation.parquet...")
     val = pd.read_parquet(VAL_FILE)
     feature_cols = [c for c in val.columns if c.startswith("feature_")]
-    keep = [ERA_COL, TARGET_COL] + feature_cols
+    keep = [ERA_COL] + TARGET_COLS + feature_cols
     val = val[[c for c in keep if c in val.columns]].copy()
+    valid_targets = [c for c in TARGET_COLS if c in val.columns]
+    if not valid_targets:
+        valid_targets = [c for c in val.columns if c.startswith("target")]
+        TARGET_COLS.clear()
+        TARGET_COLS.extend(valid_targets[:4])
     
     logger.info("Reading train.parquet in memory-efficient chunks (~30% sampling)...")
     import pyarrow.parquet as pq
@@ -104,23 +110,25 @@ def era_spearman(preds, y, eras):
     return float(np.mean(scores)) if scores else 0.0
 
 
-def temporal_cv(params, train, feature_cols):
+def temporal_cv(params, train, feature_cols, target_col):
     eras = sorted(train[ERA_COL].unique())
     n = len(eras)
     if n < N_CV_ERAS + 2:
         return 0.0
     fold_size = n // (N_CV_ERAS + 1)
     scores = []
+    embargo = 4
     for k in range(N_CV_ERAS):
         cutoff = (k + 1) * fold_size
         val_end = min(cutoff + fold_size, n)
-        tr = train[train[ERA_COL].isin(eras[:cutoff])]
+        tr = train[train[ERA_COL].isin(eras[:cutoff - embargo])]
         vl = train[train[ERA_COL].isin(eras[cutoff:val_end])]
+        if len(tr) == 0 or len(vl) == 0: continue
         X_tr = tr[feature_cols].fillna(0.5).values.astype(np.float32)
-        y_tr = tr[TARGET_COL].values.astype(np.float32)
+        y_tr = tr[target_col].values.astype(np.float32)
         X_vl = vl[feature_cols].fillna(0.5).values.astype(np.float32)
-        y_vl = vl[TARGET_COL].values.astype(np.float32)
-        mdl = xgb.XGBRegressor(**params, tree_method="hist", device="cpu", verbosity=0)
+        y_vl = vl[target_col].values.astype(np.float32)
+        mdl = lgb.LGBMRegressor(**params, device_type="cpu", n_jobs=-1, verbose=-1)
         mdl.fit(X_tr, y_tr)
         scores.append(era_spearman(mdl.predict(X_vl), y_vl, vl[ERA_COL]))
     return float(np.mean(scores))
@@ -128,27 +136,29 @@ def temporal_cv(params, train, feature_cols):
 
 # ─── OPTUNA OBJECTIVE ────────────────────────────────────────────────────────
 
-def objective(trial, train, feature_cols):
+def objective(trial, train, feature_cols, target_col):
     if (time.time() - START_TIME) > (MAX_RUNTIME_MIN * 60):
         trial.study.stop()
         return 0.0
     params = {
-        'n_estimators': trial.suggest_int('n_estimators', 100, 800),
-        'max_depth': trial.suggest_int('max_depth', 3, 6),
-        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1, log=True),
+        'n_estimators': trial.suggest_int('n_estimators', 100, 600),
+        'max_depth': trial.suggest_int('max_depth', 3, 7),
+        'learning_rate': trial.suggest_float('learning_rate', 0.005, 0.1, log=True),
+        'num_leaves': trial.suggest_int('num_leaves', 15, 127),
         'subsample': trial.suggest_float('subsample', 0.5, 1.0),
-        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.4, 0.8),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.1, 0.8),
         'min_child_weight': trial.suggest_int('min_child_weight', 1, 20),
     }
-    return temporal_cv(params, train, feature_cols)
+    return temporal_cv(params, train, feature_cols, target_col)
 
 
 # ─── FALLBACK WEIGHTS ─────────────────────────────────────────────────────────
 
 def compute_fallback_weights(val, feature_cols):
     try:
-        sample = val[feature_cols + [TARGET_COL]].sample(min(5000, len(val))).fillna(0.5)
-        y = sample[TARGET_COL].values.astype(np.float64)
+        tg = [t for t in TARGET_COLS if t in val.columns][0]
+        sample = val[feature_cols + [tg]].sample(min(5000, len(val))).fillna(0.5)
+        y = sample[tg].values.astype(np.float64)
         X = sample[feature_cols].values.astype(np.float64)
         weights = []
         for i in range(X.shape[1]):
@@ -161,7 +171,7 @@ def compute_fallback_weights(val, feature_cols):
 
 # ─── RESILIENT WRAPPER ────────────────────────────────────────────────────────
 
-def create_resilient_predict(model_instance, feature_cols, fallback_weights):
+def create_resilient_predict(model_instances, feature_cols, fallback_weights):
     """
     Creates a self-contained closure that:
     1. Uses native XGBoost instance closure (avoiding JSON buffer overflow and sigkill).
@@ -187,13 +197,24 @@ def create_resilient_predict(model_instance, feature_cols, fallback_weights):
             X = np.hstack([X, pad])
         X = X[:, :n_features]
 
-        # PRIMARY: XGBoost Native Execution
+        # PRIMARY: Ensembled LGBM + Neutralization
         try:
-            preds = model_instance.predict(X.astype(np.float32))
-            ranked = pd.Series(preds).rank(pct=True).values
+            raw_preds = []
+            for mdl in model_instances:
+                raw_preds.append(mdl.predict(X.astype(np.float32)))
+            preds = np.mean(raw_preds, axis=0)
+            
+            # Neutralization against top features
+            F = X[:, :min(50, n_features)]
+            F = F - np.mean(F, axis=0)
+            p = preds - np.mean(preds)
+            exposure = np.linalg.pinv(F).dot(p)
+            p_neut = p - 0.5 * F.dot(exposure)
+            
+            ranked = (np.argsort(np.argsort(p_neut)) + 0.5) / len(p_neut)
             return pd.DataFrame({'prediction': ranked}, index=live_features.index)
-        except Exception as e_xgb:
-            print(f"[FALLBACK-1] XGBoost Native failed: {e_xgb}")
+        except Exception as e_lgb:
+            print(f"[FALLBACK-1] Ensemble/LGBM failed: {e_lgb}")
 
         # SECONDARY: Pure NumPy linear
         try:
@@ -307,9 +328,9 @@ def run_upgrade():
             full_metrics[model_name] = {
                 "best_score": final_val_score,
                 "cv_score": study.best_trial.value,
-                "params": best_params,
+                "params": best_params_display,
                 "timestamp": datetime.datetime.now().isoformat(),
-                "version": "5.2.0-protocol2-fix",
+                "version": "6.0.0-10x-hyperscale",
             }
         except Exception as exc:
             logger.error(f"Upload failed for {model_name}: {exc}")
